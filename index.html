@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Contact Book</title>
+  <style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #e9eff5;
+  color: #333;
+}
+background: #e9eff5;
+.contact { background: #ffffff; }
+.top-controls button { background: #0d6efd; 
+}
+
+
+
+    h2, h3 {
+      text-align: center;
+      color: #333;
+    }
+
+    .top-controls {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .top-controls input {
+      padding: 10px;
+      width: 60%;
+      max-width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .top-controls button {
+      padding: 10px 16px;
+      margin-left: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .top-controls button:hover {
+      background-color: #0056b3;
+    }
+
+    .contact {
+      display: flex;
+      align-items: center;
+      background: white;
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: box-shadow 0.2s;
+    }
+
+    .contact:hover {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .contact img {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+
+    .contact-name {
+      font-weight: 600;
+      font-size: 17px;
+    }
+
+    .edit-btn, .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      margin-left: 10px;
+    }
+
+    .edit-btn {
+      color: #007bff;
+      margin-left: auto;
+    }
+
+    .delete-btn {
+      color: red;
+    }
+
+    .details {
+      background: #ffffff;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border-left: 4px solid #007bff;
+      display: none;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .details input {
+      width: 96%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .save-btn {
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .save-btn:hover {
+      background-color: #0056b3;
+    }
+
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      margin-top: 30px;
+    }
+
+    form input {
+      width: 96%;
+      padding: 10px;
+      margin-bottom: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    form button {
+      padding: 10px 20px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background-color: #218838;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scaleY(0.9); }
+      to { opacity: 1; transform: scaleY(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Contact Book</h2>
+
+  <div class="top-controls">
+    <input type="text" id="searchInput" placeholder="Search contacts..." oninput="filterContacts()" />
+    <button onclick="toggleForm()">Add Contact</button>
+  </div>
+
+  <div id="contactList">Loading contacts...</div>
+
+  <form id="newContactForm" style="display:none;">
+    <h3>Add New Contact</h3>
+    <input type="text" id="newFirstName" placeholder="First Name" required />
+    <input type="text" id="newLastName" placeholder="Last Name" required />
+    <input type="email" id="newEmail" placeholder="Email" />
+    <input type="text" id="newContactNumber" placeholder="Contact Number" />
+    <input type="url" id="newAvatar" placeholder="Image URL" value="https://i.pravatar.cc/100?img=3" />
+    <button type="submit">Add Contact</button>
+  </form>
+
+  <script>
+    let contacts = [
+      {
+        Firstname: "John",
+        Lastname: "Doe",
+        Email: "john.doe@example.com",
+        ContactNumber: "123-456-7890",
+        avatar: "https://i.pravatar.cc/100?img=1"
+      },
+      {
+        Firstname: "Jane",
+        Lastname: "Smith",
+        Email: "jane.smith@example.com",
+        ContactNumber: "987-654-3210",
+        avatar: "https://i.pravatar.cc/100?img=2"
+      }
+    ];
+
+    function renderContacts(data) {
+      const container = document.getElementById("contactList");
+      container.innerHTML = "";
+
+      data.forEach((contact, index) => {
+        const contactDiv = document.createElement("div");
+        contactDiv.className = "contact";
+
+        const img = document.createElement("img");
+        img.src = contact.avatar;
+
+        const name = document.createElement("div");
+        name.className = "contact-name";
+        name.textContent = `${contact.Firstname} ${contact.Lastname}`;
+
+        const editBtn = document.createElement("button");
+        editBtn.innerHTML = "✏️";
+        editBtn.className = "edit-btn";
+        editBtn.title = "Edit Contact";
+        editBtn.onclick = (e) => {
+          e.stopPropagation();
+          detailDiv.style.display = detailDiv.style.display === "block" ? "none" : "block";
+        };
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerHTML = "🗑️";
+        deleteBtn.className = "delete-btn";
+        deleteBtn.title = "Delete Contact";
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation();
+          if (confirm("Delete this contact?")) {
+            contacts.splice(index, 1);
+            renderContacts(contacts);
+          }
+        };
+
+        contactDiv.appendChild(img);
+        contactDiv.appendChild(name);
+        contactDiv.appendChild(editBtn);
+        contactDiv.appendChild(deleteBtn);
+
+        const detailDiv = document.createElement("div");
+        detailDiv.className = "details";
+        detailDiv.innerHTML = `
+          <label>First Name:</label>
+          <input type="text" value="${contact.Firstname}" id="first-${index}">
+          <label>Last Name:</label>
+          <input type="text" value="${contact.Lastname}" id="last-${index}">
+          <label>Email:</label>
+          <input type="email" value="${contact.Email}" id="email-${index}">
+          <label>Contact Number:</label>
+          <input type="text" value="${contact.ContactNumber}" id="number-${index}">
+          <button class="save-btn" onclick="saveContact(${index}, event)">Save</button>
+        `;
+
+        container.appendChild(contactDiv);
+        container.appendChild(detailDiv);
+      });
+    }
+
+    function saveContact(index, event) {
+      event.stopPropagation();
+      contacts[index].Firstname = document.getElementById(`first-${index}`).value;
+      contacts[index].Lastname = document.getElementById(`last-${index}`).value;
+      contacts[index].Email = document.getElementById(`email-${index}`).value;
+      contacts[index].ContactNumber = document.getElementById(`number-${index}`).value;
+      alert("✅ Contact updated successfully.");
+      renderContacts(contacts);
+    }
+
+    function toggleForm() {
+      const form = document.getElementById("newContactForm");
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    }
+
+    function filterContacts() {
+      const term = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = contacts.filter(c =>
+        `${c.Firstname} ${c.Lastname}`.toLowerCase().includes(term)
+      );
+      renderContacts(filtered);
+    }
+
+    document.getElementById("newContactForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const newContact = {
+        Firstname: document.getElementById("newFirstName").value,
+        Lastname: document.getElementById("newLastName").value,
+        Email: document.getElementById("newEmail").value,
+        ContactNumber: document.getElementById("newContactNumber").value,
+        avatar: document.getElementById("newAvatar").value || "https://i.pravatar.cc/100"
+      };
+
+      if (!newContact.Firstname || !newContact.Lastname) {
+        alert("⚠️ First and Last name are required.");
+        return;
+      }
+
+      contacts.push(newContact);
+      alert("✅ New contact added!");
+      this.reset();
+      document.getElementById("newContactForm").style.display = "none";
+      renderContacts(contacts);
+    });
+
+    // Initial load
+    renderContacts(contacts);
+  </script>
+</body>
+</html>
+
+
+
+     
+
+
+
+
+
+
+
+
+
+
